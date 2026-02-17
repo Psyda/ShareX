@@ -1,3 +1,55 @@
+# ShareX HDR Screenshot Support
+
+## Overview
+
+This is a Proof of Concept ShareX build with HDR support. It adds DXGI Desktop Duplication based screen capture that correctly handles HDR content, tonemapping it to SDR (sRGB) for the final screenshot output. SDR content on screen is preserved without any visual changes.
+
+## How to Enable
+
+Enable HDR capture in **Task Settings > Capture > HDR capture**, or configure it per-hotkey in your hotkey's task settings.
+
+## How It Works
+
+When HDR capture is enabled, ShareX uses DXGI Desktop Duplication instead of GDI BitBlt for screen capture. The pipeline:
+
+1. Creates a D3D11 device and enumerates all DXGI outputs (monitors).
+2. For each monitor that intersects the capture region, probes the output format via `DuplicateOutput1`.
+3. HDR monitors (RGBA16F or R10G10B10A2) go through the full DXGI capture pipeline with tonemapping.
+4. SDR monitors (B8G8R8A8) use the fast GDI BitBlt path, no conversion needed.
+5. Results from all monitors are composited onto a single bitmap at the correct virtual desktop offsets.
+
+### Supported Formats
+
+| Format | Pipeline | Description |
+|--------|----------|-------------|
+| RGBA16F (scRGB) | Normalize by SDR white level, BT.2390 tonemap, linear to sRGB | Windows HDR with DWM composition |
+| R10G10B10A2 (HDR10) | PQ (ST.2084) decode, BT.2020 to BT.709 color matrix, BT.2390 tonemap, linear to sRGB | HDR10 output mode |
+| B8G8R8A8 (SDR) | Direct copy (GDI fast path) | Standard SDR monitors |
+
+### Tonemapping
+
+Uses BT.2390 luminance-based compression. SDR content (luminance <= 1.0) passes through completely untouched. Only highlights above 1.0 are soft-compressed. This preserves the appearance of standard desktop content while gracefully handling HDR highlights.
+
+## Known Limitations
+
+- **Performance:** There is an overhead of approximately 1.5 to 2 seconds for a 4K screenshot with this method. Most of that time is spent in the DWM warm-up and frame acquisition retry loop that is necessary to avoid capturing a black frame.
+- **Single adapter:** Currently only enumerates outputs on the default DXGI adapter. Multi-GPU setups (e.g. discrete + integrated with monitors on each) may not capture all monitors via HDR. Affected monitors fall back to GDI.
+
+## TODO
+
+- Working on improving performance and reducing the warm-up overhead.
+- Profiling the frame acquisition loop to find the minimum reliable sleep/retry timing.
+- Investigating whether the D3D11 device and duplication handles can be cached across captures for repeat screenshot scenarios.
+- Multi-adapter enumeration for mixed GPU setups.
+
+## Files Changed
+
+- **Screenshot.cs** - Integration point. When `CaptureHDREnabled` is true, `CaptureRectangle` tries the HDR path first and falls back to GDI on failure.
+- **Screenshot_HDR.cs** - New partial class file. Contains all DXGI/D3D11 interop, COM interface declarations, format probing, multi-monitor compositing, pixel conversion, and tonemapping.
+- **TaskSettings / Taskhelpers / UI** - Added CaptureHDREnabled persistence and a GUI checkbox to the Task Settings Capture menu.
+
+
+
 <p align="center"><a href="https://getsharex.com"><img src="https://getsharex.com/img/ShareX_Banner.png" alt="ShareX Banner"/></a></p>
 <h3 align="center">Screen capture, file sharing and productivity tool</h3>
 <br>

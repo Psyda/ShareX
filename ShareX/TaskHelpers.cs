@@ -2214,6 +2214,7 @@ namespace ShareX
                 RemoveOutsideScreenArea = true,
                 CaptureShadow = taskSettings.CaptureSettings.CaptureShadow,
                 ShadowOffset = taskSettings.CaptureSettings.CaptureShadowOffset,
+                CaptureHDREnabled = taskSettings.CaptureSettings.CaptureHDREnabled,
                 AutoHideTaskbar = taskSettings.CaptureSettings.CaptureAutoHideTaskbar
             };
 

@@ -158,6 +158,7 @@
             cbCaptureTransparent = new System.Windows.Forms.CheckBox();
             cbCaptureAutoHideTaskbar = new System.Windows.Forms.CheckBox();
             cbCaptureShadow = new System.Windows.Forms.CheckBox();
+            cbCaptureHDREnabled = new System.Windows.Forms.CheckBox();
             lblScreenshotDelayInfo = new System.Windows.Forms.Label();
             cbCaptureClientArea = new System.Windows.Forms.CheckBox();
             nudScreenshotDelay = new System.Windows.Forms.NumericUpDown();
@@ -1206,6 +1207,7 @@
             pCapture.Controls.Add(cbCaptureTransparent);
             pCapture.Controls.Add(cbCaptureAutoHideTaskbar);
             pCapture.Controls.Add(cbCaptureShadow);
+            pCapture.Controls.Add(cbCaptureHDREnabled);
             pCapture.Controls.Add(lblScreenshotDelayInfo);
             pCapture.Controls.Add(cbCaptureClientArea);
             pCapture.Controls.Add(nudScreenshotDelay);
@@ -1332,6 +1334,13 @@
             cbCaptureShadow.Name = "cbCaptureShadow";
             cbCaptureShadow.UseVisualStyleBackColor = true;
             cbCaptureShadow.CheckedChanged += cbCaptureShadow_CheckedChanged;
+            // 
+            // cbCaptureHDREnabled
+            // 
+            resources.ApplyResources(cbCaptureHDREnabled, "cbCaptureHDREnabled");
+            cbCaptureHDREnabled.Name = "cbCaptureHDREnabled";
+            cbCaptureHDREnabled.UseVisualStyleBackColor = true;
+            cbCaptureHDREnabled.CheckedChanged += cbCaptureHDREnabled_CheckedChanged;
             // 
             // lblScreenshotDelayInfo
             // 
@@ -2618,6 +2627,7 @@
         private System.Windows.Forms.CheckBox cbCaptureShadow;
         private System.Windows.Forms.CheckBox cbShowCursor;
         private System.Windows.Forms.CheckBox cbCaptureTransparent;
+        private System.Windows.Forms.CheckBox cbCaptureHDREnabled;
         private System.Windows.Forms.TabPage tpRegionCapture;
         private System.Windows.Forms.TabPage tpScreenRecorder;
         private System.Windows.Forms.TabPage tpTask;

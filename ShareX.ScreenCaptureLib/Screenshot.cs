@@ -47,6 +47,45 @@ namespace ShareX.ScreenCaptureLib
                 rect = Rectangle.Intersect(bounds, rect);
             }
 
+            if (CaptureHDREnabled)
+            {
+                try
+                {
+                    Bitmap hdrResult = CaptureRectangleHDR(rect);
+                    if (hdrResult != null)
+                    {
+                        if (CaptureCursor)
+                        {
+                            try
+                            {
+                                CursorData cursorData = new CursorData();
+                                using (Graphics g = Graphics.FromImage(hdrResult))
+                                {
+                                    IntPtr hdc = g.GetHdc();
+                                    try
+                                    {
+                                        cursorData.DrawCursor(hdc, rect.Location);
+                                    }
+                                    finally
+                                    {
+                                        g.ReleaseHdc(hdc);
+                                    }
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                DebugHelper.WriteException(e, "HDR: Cursor capture failed.");
+                            }
+                        }
+                        return hdrResult;
+                    }
+                }
+                catch (Exception e)
+                {
+                    DebugHelper.WriteException(e, "HDR capture failed, falling back to GDI.");
+                }
+            }
+
             return CaptureRectangleNative(rect, CaptureCursor);
         }
 

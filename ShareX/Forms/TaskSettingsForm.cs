@@ -276,6 +276,7 @@ namespace ShareX
             cbCaptureTransparent.Checked = TaskSettings.CaptureSettings.CaptureTransparent;
             cbCaptureShadow.Enabled = TaskSettings.CaptureSettings.CaptureTransparent;
             cbCaptureShadow.Checked = TaskSettings.CaptureSettings.CaptureShadow;
+            cbCaptureHDREnabled.Checked = TaskSettings.CaptureSettings.CaptureHDREnabled;
             nudCaptureShadowOffset.SetValue(TaskSettings.CaptureSettings.CaptureShadowOffset);
             cbCaptureClientArea.Checked = TaskSettings.CaptureSettings.CaptureClientArea;
             cbCaptureAutoHideDesktopIcons.Checked = TaskSettings.CaptureSettings.CaptureAutoHideDesktopIcons;
@@ -1076,6 +1077,10 @@ namespace ShareX
         private void nudScreenshotDelay_ValueChanged(object sender, EventArgs e)
         {
             TaskSettings.CaptureSettings.ScreenshotDelay = nudScreenshotDelay.Value;
+        }
+        private void cbCaptureHDREnabled_CheckedChanged(object sender, EventArgs e)
+        {
+            TaskSettings.CaptureSettings.CaptureHDREnabled = cbCaptureHDREnabled.Checked;
         }
 
         private void cbCaptureTransparent_CheckedChanged(object sender, EventArgs e)
