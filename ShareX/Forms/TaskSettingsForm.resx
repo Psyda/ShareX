@@ -3307,6 +3307,30 @@
   <data name="&gt;&gt;cbCaptureShadow.ZOrder" xml:space="preserve">
     <value>18</value>
   </data>
+  <data name="cbCaptureHDREnabled.Location" type="System.Drawing.Point, System.Drawing">
+    <value>176, 4</value>
+  </data>
+  <data name="cbCaptureHDREnabled.Size" type="System.Drawing.Size, System.Drawing">
+    <value>288, 24</value>
+  </data>
+  <data name="cbCaptureHDREnabled.TabIndex" type="System.Int32, mscorlib">
+    <value>23</value>
+  </data>
+  <data name="cbCaptureHDREnabled.Text" xml:space="preserve">
+    <value>HDR capture (DXGI: HDR-aware screenshots) 1.5s Delay</value>
+  </data>
+  <data name="&gt;&gt;cbCaptureHDREnabled.Name" xml:space="preserve">
+    <value>cbCaptureHDREnabled</value>
+  </data>
+  <data name="&gt;&gt;cbCaptureHDREnabled.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cbCaptureHDREnabled.Parent" xml:space="preserve">
+    <value>pCapture</value>
+  </data>
+  <data name="&gt;&gt;cbCaptureHDREnabled.ZOrder" xml:space="preserve">
+    <value>19</value>
+  </data>
   <data name="lblScreenshotDelayInfo.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -3335,7 +3359,7 @@
     <value>pCapture</value>
   </data>
   <data name="&gt;&gt;lblScreenshotDelayInfo.ZOrder" xml:space="preserve">
-    <value>19</value>
+    <value>20</value>
   </data>
   <data name="cbCaptureClientArea.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -3365,7 +3389,7 @@
     <value>pCapture</value>
   </data>
   <data name="&gt;&gt;cbCaptureClientArea.ZOrder" xml:space="preserve">
-    <value>20</value>
+    <value>21</value>
   </data>
   <data name="nudScreenshotDelay.Location" type="System.Drawing.Point, System.Drawing">
     <value>8, 48</value>
@@ -3389,7 +3413,7 @@
     <value>pCapture</value>
   </data>
   <data name="&gt;&gt;nudScreenshotDelay.ZOrder" xml:space="preserve">
-    <value>21</value>
+    <value>22</value>
   </data>
   <data name="nudCaptureShadowOffset.Location" type="System.Drawing.Point, System.Drawing">
     <value>8, 144</value>
@@ -3413,7 +3437,7 @@
     <value>pCapture</value>
   </data>
   <data name="&gt;&gt;nudCaptureShadowOffset.ZOrder" xml:space="preserve">
-    <value>22</value>
+    <value>23</value>
   </data>
   <data name="pCapture.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -4769,13 +4793,13 @@
     <value>35</value>
   </data>
   <data name="tpRegionCapture.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 22</value>
+    <value>4, 24</value>
   </data>
   <data name="tpRegionCapture.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 3</value>
   </data>
   <data name="tpRegionCapture.Size" type="System.Drawing.Size, System.Drawing">
-    <value>557, 453</value>
+    <value>557, 451</value>
   </data>
   <data name="tpRegionCapture.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>

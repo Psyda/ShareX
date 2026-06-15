@@ -736,45 +736,60 @@ namespace ShareX.ScreenCaptureLib
                     DebugHelper.WriteLine($"HDR: DuplicateOutput (legacy) OK, format={texFormat}");
                 }
 
-                // Warm-up and frame acquisition with retry loop.
-                // DWM often returns a black/empty frame immediately after duplication
-                // init. We retry up to 30 times, discarding frames where
-                // LastPresentTime == 0 (no new pixel data from the compositor).
-                Thread.Sleep(50);
-
+                // The duplicated surface is filled by the OS copying the desktop into
+                // it, and that only happens WHILE WE DO NOT OWN A FRAME (see the
+                // ReleaseFrame remarks). So the first acquire after DuplicateOutput can
+                // hand back a blank surface. We pump acquire/release, never keeping a
+                // frame, until the compositor reports real content (LastPresentTime != 0
+                // or AccumulatedFrames > 0), then keep that frame.
                 object resourceObj = null;
+                DXGI_OUTDUPL_FRAME_INFO frameInfo = default;
 
-                for (int attempt = 0; attempt < 30; attempt++)
+                const int perAcquireMs = 100;   // blocking wait per acquire, paces the loop
+                const int presentBudgetMs = 600; // how long to wait for a present before fallback
+                var sw = System.Diagnostics.Stopwatch.StartNew();
+
+                while (sw.ElapsedMilliseconds < presentBudgetMs)
                 {
-                    int acquireHr = duplication.AcquireNextFrame(200, out DXGI_OUTDUPL_FRAME_INFO frameInfo, out resourceObj);
+                    int acquireHr = duplication.AcquireNextFrame(perAcquireMs, out frameInfo, out resourceObj);
 
                     if (acquireHr == 0)
                     {
-                        if (frameInfo.LastPresentTime == 0 && attempt < 5)
-                        {
-                            if (resourceObj != null)
-                            {
-                                Marshal.ReleaseComObject(resourceObj);
-                                resourceObj = null;
-                            }
-                            duplication.ReleaseFrame();
-                            Thread.Sleep(50);
-                            continue;
-                        }
-                        break;
-                    }
+                        // Real composited content is in the surface. Keep this frame.
+                        if (frameInfo.LastPresentTime != 0 || frameInfo.AccumulatedFrames > 0)
+                            break;
 
-                    if (acquireHr == DXGI_ERROR_WAIT_TIMEOUT)
-                    {
+                        // Blank warm-up frame. Release so the OS can copy the desktop in.
+                        Marshal.ReleaseComObject(resourceObj);
+                        resourceObj = null;
+                        duplication.ReleaseFrame();
                         continue;
                     }
 
-                    Thread.Sleep(50);
+                    if (acquireHr == DXGI_ERROR_WAIT_TIMEOUT)
+                        continue;
+
+                    DebugHelper.WriteLine($"HDR: AcquireNextFrame failed 0x{acquireHr:X8}");
+                    break;
+                }
+
+                // Fallback for an idle desktop that never presented: give the OS a fixed
+                // window to populate the surface (we hold no frame here), then keep the
+                // next frame regardless of its present flags.
+                if (resourceObj == null)
+                {
+                    Thread.Sleep(120);
+                    for (int i = 0; i < 5 && resourceObj == null; i++)
+                    {
+                        int hr = duplication.AcquireNextFrame(200, out frameInfo, out resourceObj);
+                        if (hr == 0) break;
+                        resourceObj = null;
+                    }
                 }
 
                 if (resourceObj == null)
                 {
-                    DebugHelper.WriteLine("HDR: Timed out acquiring valid frame.");
+                    DebugHelper.WriteLine("HDR: No populated frame acquired.");
                     return false;
                 }
 
